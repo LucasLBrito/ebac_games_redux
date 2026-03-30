@@ -1,46 +1,38 @@
-# Getting Started with Create React App
+# EBAC Games - Redux
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este projeto é uma aplicação React de e-commerce de jogos (EBAC Games), focada em demonstrar a utilização de conceitos modernos do **React**, **Redux Toolkit** e **RTK Query** para gerenciamento de estado e chamadas de API.
 
-## Available Scripts
+## Conceitos do React e Bibliotecas Utilizadas
 
-In the project directory, you can run:
+Abaixo estão explicados os principais conceitos e ferramentas aplicados neste projeto:
 
-### `npm start`
+### 1. Componentização (React)
+A interface de usuário foi dividida em pequenos pedaços reutilizáveis e independentes chamados de componentes (ex: `Header`, `Produto`, `Produtos` (Lista)). 
+- **Props**: Utilizamos propriedades (`props`) para passar dados de componentes pais para componentes filhos (ex: repassando um objeto `game` da listagem para o componente `Produto`).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### 2. Gerenciamento de Estado Global (Redux Toolkit)
+Ao invés de passar dados (`props` ou `state`) através de vários níveis de componentes, usamos o **Redux Toolkit** para criar uma loja (Store) central.
+- **Store (`store/index.ts`)**: Onde o estado global da aplicação vive. Abriga tanto o estado do carrinho quanto os reducers da API.
+- **Slice (`store/reducers/carrinho.ts`)**: Uma coleção de lógica do Redux e ações de um único recurso (o "carrinho" de compras). Ele define o estado inicial (uma lista de jogos `itens: Game[]`) e os modificadores ou *reducers* (como `adicionarAoCarrinho`).
+- **Hooks do React-Redux (`useSelector`, `useDispatch`)**: 
+  - `useSelector`: Permite que os componentes (como o `Header`) leiam e reajam a mudanças em informações específicas da Store (ex: a quantidade ou quais itens estão no carrinho).
+  - `useDispatch`: Usado para despachar ações (como o clique no botão "Adicionar ao carrinho" dentro de `Produto`) que indicam à Store que ela deve atualizar o estado usando os redutores.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### 3. Data Fetching e Caching (RTK Query)
+A aplicação faz chamadas à uma API REST simulada (`json-server`) para buscar a listagem de jogos na página. 
+- **`createApi` (`api.ts`)**: Utilizamos o utilitário do RTK Query em vez da forma tradicional do React com `useEffect` e `state` locais para buscar dados. Ele abstrai todo o processo de *fetching*, oferecendo estados nativos como "carregando" (`isLoading`) ou "dados" (`data`).
+- **`useGetJogosQuery`**: Um hook gerado automaticamente pela API (`services/api.ts`) que busca nossos produtos e retorna os dados prontos para uso no componente `Produtos.tsx`.
 
-### `npm test`
+### 4. Styled Components (CSS-in-JS)
+Em vez de depender de arquivos `.css` externos ou Modules, toda a renderização visual e estilo é controlada via Javascript através da biblioteca `styled-components`.
+- **Estilos Globais**: Garantimos um reset customizado (`createGlobalStyle` em `styles.ts`) que atinge toda a hierarquia de forma transversal (cores padrão, formatações de fonte, margens etc.).
+- **Componentes Estilizados**: (Ex: `<S.Produto>`, `<S.BtnComprar>`) Onde misturamos tags HTML encapsuladas com os visuais da interface sem sujar o DOM com infinitas classes.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 5. TypeScript
+Todo o projeto foi construído utilizando TypeScript. Ele garante o máximo de previsibilidade e auto-complemento de código adicionando **Tipos e Interfaces** (por exemplo o tipo `export type Game`, ou o tipo da própria `Store` com o `RootState`). Isso ajuda a prevenir a maioria dos erros de tempo de execução como propriedades não existentes (`any` e `undefined`). 
 
-### `npm run build`
+## Como Rodar o Projeto
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. Instale as dependências com `npm install`.
+2. Em um terminal, starte a Fake API (db.json): `npx json-server db.json --port 4000`.
+3. Em outro terminal rode a aplicação: `npm start`.
