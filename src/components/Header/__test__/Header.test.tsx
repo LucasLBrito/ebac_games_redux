@@ -35,6 +35,6 @@ describe('Testando Header', () => {
         }
       }
     })
-    expect(screen.getByTestId('total-itens').innerHTML).toBe('2 itens')
+    expect(screen.getByTestId('total-itens')).toHaveTextContent('2 itens')
   })
 })
